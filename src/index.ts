@@ -10,5 +10,4 @@ mongoose
   })
   .catch((error) => {
     console.log("Error when connecting the database : ", error);
-    console.log("ddd ", mongoURL);
   });
