@@ -1,6 +1,6 @@
 import { type NextFunction, type Request, type Response } from "express";
 import mongoose from "mongoose";
-import User, { type UserType } from "../../schemas/User";
+import User, { type UserType } from "../../../schemas/User";
 import { type ValidationError, validationResult } from "express-validator";
 
 type ReqPayload = {

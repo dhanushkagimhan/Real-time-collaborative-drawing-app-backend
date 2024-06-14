@@ -6,6 +6,7 @@ import express, {
   type Response,
 } from "express";
 import cors from "cors";
+import router from "./routes";
 
 const mongoURL: string =
   process.env.MONGO_URL ??
@@ -38,7 +39,7 @@ const startServer = (): void => {
     res.json({ message: "Hello from API Services!" });
   });
 
-  // app.use("/v1", router);
+  app.use("/v1", router);
 
   try {
     app.listen(PORT, () => {
