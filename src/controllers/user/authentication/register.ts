@@ -36,6 +36,16 @@ const register = async (
 
     const payload: ReqPayload = req.body;
 
+    const exist = await User.estimatedDocumentCount({ email: payload.email });
+
+    if (exist > 0) {
+      const responseData: ApiResponse = {
+        success: false,
+        message: "Email is already registered!",
+      };
+      return res.status(400).send(responseData);
+    }
+
     const user = new User({
       _id: new mongoose.Types.ObjectId(),
       email: payload.email,
