@@ -1,7 +1,8 @@
 import { type NextFunction, type Request, type Response } from "express";
 import mongoose from "mongoose";
-import User, { type UserType } from "../../../schemas/User";
+import User from "../../../schemas/User";
 import { type ValidationError, validationResult } from "express-validator";
+import bcrypt from "bcrypt";
 
 type ReqPayload = {
   email: string;
@@ -10,9 +11,15 @@ type ReqPayload = {
   lastName: string;
 };
 
+type UserResponse = {
+  email: string;
+  firstName: string;
+  lastName: string;
+};
+
 type ApiResponse = {
   success: boolean;
-  data?: UserType;
+  data?: UserResponse;
   message?: string;
   errors?: ValidationError[];
 };
@@ -36,7 +43,11 @@ const register = async (
 
     const payload: ReqPayload = req.body;
 
-    const exist = await User.estimatedDocumentCount({ email: payload.email });
+    const exist: number = await User.countDocuments({
+      email: payload.email,
+    });
+
+    console.log("ddddddd", exist);
 
     if (exist > 0) {
       const responseData: ApiResponse = {
@@ -46,19 +57,28 @@ const register = async (
       return res.status(400).send(responseData);
     }
 
+    const saltRound = 8;
+    const hashPassword: string = await bcrypt.hash(payload.password, saltRound);
+
     const user = new User({
       _id: new mongoose.Types.ObjectId(),
       email: payload.email,
-      password: payload.password,
+      password: hashPassword,
       firstName: payload.firstName,
       lastName: payload.lastName,
     });
 
     const newUser = await user.save();
 
+    const userRes: UserResponse = {
+      email: newUser.email,
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
+    };
+
     const response: ApiResponse = {
       success: true,
-      data: newUser,
+      data: userRes,
     };
 
     return res.status(201).send(response);
