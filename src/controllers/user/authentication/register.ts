@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import User from "../../../schemas/User";
 import { type ValidationError, validationResult } from "express-validator";
 import bcrypt from "bcrypt";
+import { accessTokenGenerator } from "../../../utility/commonMethods";
 
 type ReqPayload = {
   email: string;
@@ -15,6 +16,7 @@ type UserResponse = {
   email: string;
   firstName: string;
   lastName: string;
+  token: string;
 };
 
 type ApiResponse = {
@@ -47,8 +49,6 @@ const register = async (
       email: payload.email,
     });
 
-    console.log("ddddddd", exist);
-
     if (exist > 0) {
       const responseData: ApiResponse = {
         success: false,
@@ -70,10 +70,13 @@ const register = async (
 
     const newUser = await user.save();
 
+    const accessToken: string = accessTokenGenerator(newUser.email);
+
     const userRes: UserResponse = {
       email: newUser.email,
       firstName: newUser.firstName,
       lastName: newUser.lastName,
+      token: accessToken,
     };
 
     const response: ApiResponse = {
