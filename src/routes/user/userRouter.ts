@@ -9,4 +9,9 @@ userRouter.post("/register", [
   userController.register,
 ] as RequestHandler[]);
 
+userRouter.post("/login", [
+  userValidation.loginValidation,
+  userController.login,
+] as RequestHandler[]);
+
 export default userRouter;

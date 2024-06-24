@@ -86,7 +86,7 @@ const register = async (
 
     return res.status(201).send(response);
   } catch (error) {
-    console.log("unexpected error : ", error);
+    console.log("unexpected error {user - registration} : ", error);
     const response: ApiResponse = {
       success: false,
       message: "system Error",
